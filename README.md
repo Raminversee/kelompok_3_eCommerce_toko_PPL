@@ -13,9 +13,10 @@ Proyek aplikasi berbasis web, e-commerce untuk penjualan perlengkapan rumah tang
 
 **1. Clone dan masuk ke folder proyek**
 ```bash
-git clone [https://github.com/Raminversee/kelompok_3_eCommerce_toko_PPL.git](https://github.com/Raminversee/kelompok_3_eCommerce_toko_PPL.git)
+git clone https://github.com/Raminversee/kelompok_3_eCommerce_toko_PPL.git
 cd kelompok_3_eCommerce_toko_PPL
 git checkout develop
+```
 
 **2. Install dependencies**
 ```bash
