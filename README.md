@@ -4,7 +4,7 @@ Proyek aplikasi berbasis web, e-commerce untuk penjualan perlengkapan rumah tang
 
 ## Persyaratan Sistem
 
-- PHP >= 8.2
+- PHP >= 8.4
 - Composer
 - Node.js & npm
 - MySQL / PostgreSQL
