@@ -1,21 +1,39 @@
-name: CI Pipeline
+name: Laravel CI
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ develop ]
+    branches: [main, develop]
 
 jobs:
-  build-and-test:
+  laravel-tests:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Build
-        run: echo "Build sukses"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, bcmath, pdo_mysql
 
-      - name: Test
-        run: echo "Test sukses"
+      - name: Install Dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare Environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Run Tests (SQLite)
+        env:
+          DB_CONNECTION: sqlite
+          DB_DATABASE: database/database.sqlite
+        run: |
+          mkdir -p database
+          touch database/database.sqlite
+          php artisan migrate --force
+          php artisan test
