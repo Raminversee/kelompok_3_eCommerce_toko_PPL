@@ -1,5 +1,5 @@
 # Panduan Aplikasi:
-Plazza Bangunan Sukses
+## Plazza Bangunan Sukses
 
 ## Tools yang dibutuhkan
 - Laragon
@@ -11,9 +11,10 @@ Plazza Bangunan Sukses
 - Composer
 
 **1. Clone project dari GitHub**
-Jalankan Laragon
-Buka terminal
-Clone repository project
+
+- Jalankan Laragon
+- Buka terminal
+- Clone repository project
 ```bash
 git clone https://github.com/Raminversee/kelompok_3_eCommerce_toko_PPL.git
 ```
@@ -24,6 +25,7 @@ cd kelompok_3_eCommerce_toko_PPL
 ```
 
 **2. Install dependency composer dan node.js**
+
 Jalankan:
 
 ```bash
@@ -44,9 +46,11 @@ php artisan key:generate
 ```
 
 **5. Buat database, lalu sesuaikan .env**
+
 Buka database manager:
-- Laragon → Menu → Database → HeidiSQL
-Buat database baru, misalnya:
+
+- Jalankan HeidiSQL
+- Buat database baru, misalnya:
 ```text
 ecommerce
 ```
@@ -75,6 +79,7 @@ php artisan serve
 
 
 **8. Menjalankan Laravel server**
+
 Buka terminal baru lalu jalankan (terminal sebelumnya biarkan tetap berjalan):
 ```bash
 npm run dev
