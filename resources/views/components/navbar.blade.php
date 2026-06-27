@@ -9,11 +9,22 @@
         {{-- MENU --}}
         <div class="hidden md:flex items-center gap-6 text-sm font-semibold text-gray-700">
             <a href="{{ route('home') }}" class="hover:text-navy-700">Home</a>
-            <a href="{{ route('produk.index') }}" class="hover:text-navy-700">Produk</a>
+
+            <a href="{{ route('produk.index') }}" class="hover:text-navy-700">
+                Produk
+            </a>
+
             <a href="{{ route('promo.index') }}"
-                class="hover:text-navy-700 {{ request()->routeIs('promo.*') ? 'text-navy-700 font-bold border-b-2 border-navy-700' : '' }}">
-                    Promo
-                </a>
+            class="hover:text-navy-700">
+                Promo
+            </a>
+
+            @auth
+            <a href="{{ route('chat.index') }}"
+            class="hover:text-navy-700 font-semibold">
+                Chat CS
+            </a>
+            @endauth
         </div>
 
         {{-- 🔥 SEARCH FIX TOTAL --}}

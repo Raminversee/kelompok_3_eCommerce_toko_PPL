@@ -32,6 +32,10 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::middleware('auth')->group(function () {
     Route::post('/voucher/apply',  [App\Http\Controllers\VoucherController::class, 'apply'])->name('voucher.apply');
     Route::post('/voucher/remove', [App\Http\Controllers\VoucherController::class, 'remove'])->name('voucher.remove');
+    Route::get('/chat', [App\Http\Controllers\ChatController::class, 'index'])
+    ->name('chat.index');
+    Route::post('/chat', [App\Http\Controllers\ChatController::class, 'store'])
+        ->name('chat.store');
 });
 
 /*
@@ -108,78 +112,125 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('admin')
-    ->middleware(['auth', 'is_admin'])
+    ->middleware([
+        'auth',
+        'role:super_admin,admin_penjualan,admin_pembelian'
+    ])
     ->name('admin.')
     ->group(function () {
 
+        // Dashboard (semua admin)
         Route::get('/', [App\Http\Controllers\Admin\DashboardController::class, 'index'])
             ->name('dashboard');
 
-        Route::resource('produk', App\Http\Controllers\Admin\ProdukController::class);
+        /*
+        |--------------------------------------------------------------------------
+        | SUPER ADMIN ONLY
+        |--------------------------------------------------------------------------
+        */
+        Route::middleware('role:super_admin')->group(function () {
 
-        Route::get('stok', [App\Http\Controllers\Admin\StokController::class, 'index'])
-            ->name('stok.index');
+            Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'index'])
+                ->name('users.index');
+
+            Route::get('users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])
+                ->name('users.create');
+
+            Route::post('users', [App\Http\Controllers\Admin\UserController::class, 'store'])
+                ->name('users.store');
+
+            Route::patch('users/{user}/toggle-status',
+                [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])
+                ->name('users.toggleStatus');
+
+            Route::post('users/{user}/reset-password',
+                [App\Http\Controllers\Admin\UserController::class, 'resetPassword'])
+                ->name('users.resetPassword');
+
+            Route::delete('users/{user}',
+                [App\Http\Controllers\Admin\UserController::class, 'destroy'])
+                ->name('users.destroy');
+        });
 
         /*
-        |----------------------------------------
-        | PESANAN
-        |----------------------------------------
+        |--------------------------------------------------------------------------
+        | SUPER ADMIN + ADMIN PENJUALAN
+        |--------------------------------------------------------------------------
         */
-        Route::get('pesanan', [App\Http\Controllers\Admin\PesananController::class, 'index'])
-            ->name('pesanan.index');
+        Route::middleware('role:super_admin,admin_penjualan')->group(function () {
 
-        Route::get('pesanan/{pesanan}', [App\Http\Controllers\Admin\PesananController::class, 'show'])
-            ->name('pesanan.show');
+            Route::resource(
+                'produk',
+                App\Http\Controllers\Admin\ProdukController::class
+            );
 
-        Route::patch('pesanan/{pesanan}/status', [App\Http\Controllers\Admin\PesananController::class, 'updateStatus'])
-            ->name('pesanan.updateStatus');
+            Route::resource(
+                'promo',
+                App\Http\Controllers\Admin\PromoController::class
+            );
+
+            Route::resource(
+                'voucher',
+                App\Http\Controllers\Admin\VoucherController::class
+            );
+
+            Route::get(
+                'voucher/generate-kode',
+                [App\Http\Controllers\Admin\VoucherController::class, 'generateKode']
+            )->name('voucher.generateKode');
+
+            Route::get(
+                'laporan',
+                [App\Http\Controllers\Admin\LaporanController::class, 'index']
+            )->name('laporan.index');
+
+            Route::get(
+                'laporan/export',
+                [App\Http\Controllers\Admin\LaporanController::class, 'exportExcel']
+            )->name('laporan.export');
+        });
 
         /*
-        |----------------------------------------
-        | VERIFIKASI
-        |----------------------------------------
+        |--------------------------------------------------------------------------
+        | SUPER ADMIN + ADMIN PEMBELIAN
+        |--------------------------------------------------------------------------
         */
-        Route::get('verifikasi', [App\Http\Controllers\Admin\VerifikasiController::class, 'index'])
-            ->name('verifikasi.index');
+        Route::middleware('role:super_admin,admin_pembelian')->group(function () {
 
-        Route::post('verifikasi/{pesanan}/approve', [App\Http\Controllers\Admin\VerifikasiController::class, 'approve'])
-            ->name('verifikasi.approve');
+            Route::get(
+                'stok',
+                [App\Http\Controllers\Admin\StokController::class, 'index']
+            )->name('stok.index');
 
-        Route::post('verifikasi/{pesanan}/tolak', [App\Http\Controllers\Admin\VerifikasiController::class, 'tolak'])
-            ->name('verifikasi.tolak');
+            Route::get(
+                'pesanan',
+                [App\Http\Controllers\Admin\PesananController::class, 'index']
+            )->name('pesanan.index');
 
-            /*
-        |----------------------------------------
-        | Export Excel Laporan
-        |----------------------------------------
-        */
-        Route::get('laporan/export', [App\Http\Controllers\Admin\LaporanController::class, 'exportExcel'])
-            ->name('laporan.export');
+            Route::get(
+                'pesanan/{pesanan}',
+                [App\Http\Controllers\Admin\PesananController::class, 'show']
+            )->name('pesanan.show');
 
-        /*
-        |----------------------------------------
-        | LAPORAN
-        |----------------------------------------
-        */
-        Route::get('laporan', [App\Http\Controllers\Admin\LaporanController::class, 'index'])
-            ->name('laporan.index');
+            Route::patch(
+                'pesanan/{pesanan}/status',
+                [App\Http\Controllers\Admin\PesananController::class, 'updateStatus']
+            )->name('pesanan.updateStatus');
 
-        /*
-        |----------------------------------------
-        | USER MANAGEMENT
-        |----------------------------------------
-        */
-        Route::get('users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-        Route::get('users/create', [App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
-        Route::post('users', [App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
-        Route::patch('users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggleStatus');
-        Route::post('users/{user}/reset-password', [App\Http\Controllers\Admin\UserController::class, 'resetPassword'])->name('users.resetPassword');
-        Route::delete('users/{user}', [App\Http\Controllers\Admin\UserController::class, 'destroy'])->name('users.destroy');
-        // Promo
-        Route::resource('promo', App\Http\Controllers\Admin\PromoController::class);
-        // Voucher
-Route::resource('voucher', App\Http\Controllers\Admin\VoucherController::class);
-Route::get('voucher/generate-kode', [App\Http\Controllers\Admin\VoucherController::class, 'generateKode'])
-     ->name('voucher.generateKode');
+            Route::get(
+                'verifikasi',
+                [App\Http\Controllers\Admin\VerifikasiController::class, 'index']
+            )->name('verifikasi.index');
+
+            Route::post(
+                'verifikasi/{pesanan}/approve',
+                [App\Http\Controllers\Admin\VerifikasiController::class, 'approve']
+            )->name('verifikasi.approve');
+
+            Route::post(
+                'verifikasi/{pesanan}/tolak',
+                [App\Http\Controllers\Admin\VerifikasiController::class, 'tolak']
+            )->name('verifikasi.tolak');
+        });
 
     });

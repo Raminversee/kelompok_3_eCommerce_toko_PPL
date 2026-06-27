@@ -82,7 +82,17 @@ class Produk extends Model
 
     public function getGambarUrlAttribute(): string
     {
-        if ($this->gambar && file_exists(public_path('storage/' . $this->gambar))) {
+        if (!$this->gambar) {
+            return 'https://via.placeholder.com/500x500?text=No+Image';
+        }
+
+        // jika sudah berupa uploads/produk/...
+        if (file_exists(public_path($this->gambar))) {
+            return asset($this->gambar);
+        }
+
+        // fallback lama (storage)
+        if (file_exists(public_path('storage/' . $this->gambar))) {
             return asset('storage/' . $this->gambar);
         }
 

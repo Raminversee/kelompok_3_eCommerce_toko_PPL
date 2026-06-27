@@ -29,53 +29,75 @@
             {{-- MENU --}}
             <nav class="p-4 space-y-2 text-sm">
 
-                <a href="{{ route('admin.dashboard') }}"
-                   class="block px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
-                    Dashboard
-                </a>
+            {{-- Dashboard (Semua Admin) --}}
+            <a href="{{ route('admin.dashboard') }}"
+            class="block px-4 py-2 rounded-lg transition
+            {{ request()->routeIs('admin.dashboard') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                Dashboard
+            </a>
+
+            {{-- SUPER ADMIN --}}
+            @if(auth()->user()->role == 'super_admin')
 
                 <a href="{{ route('admin.users.index') }}"
-                   class="flex items-center gap-3 px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.users*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.users*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
                     Kelola User
                 </a>
 
+            @endif
+
+            {{-- SUPER ADMIN + ADMIN PENJUALAN --}}
+            @if(in_array(auth()->user()->role, ['super_admin','admin_penjualan']))
+
                 <a href="{{ route('admin.produk.index') }}"
-                   class="block px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.produk.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.produk.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
                     Products
                 </a>
 
                 <a href="{{ route('admin.promo.index') }}"
-                    class="block px-4 py-2 rounded-lg transition
-                    {{ request()->routeIs('admin.promo.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
-                        Promo
-                    </a>
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.promo.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                    Promo
+                </a>
 
                 <a href="{{ route('admin.voucher.index') }}"
-                    class="block px-4 py-2 rounded-lg transition
-                    {{ request()->routeIs('admin.voucher.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
-                        Voucher
-                    </a>
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.voucher.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                    Voucher
+                </a>
+
+                <a href="{{ route('admin.laporan.index') }}"
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.laporan.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                    Reports
+                </a>
+
+            @endif
+
+            {{-- SUPER ADMIN + ADMIN PEMBELIAN --}}
+            @if(in_array(auth()->user()->role, ['super_admin','admin_pembelian']))
 
                 <a href="{{ route('admin.stok.index') }}"
-                   class="block px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.stok.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.stok.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
                     Stock
                 </a>
 
                 <a href="{{ route('admin.pesanan.index') }}"
-                   class="block px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.pesanan.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('admin.pesanan.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
                     Orders
                 </a>
 
-                <a href="{{ route('admin.laporan.index') }}"
-                   class="block px-4 py-2 rounded-lg transition
-                   {{ request()->routeIs('admin.laporan.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
-                    Reports
+                <a href="{{ route('chat.index') }}"
+                class="block px-4 py-2 rounded-lg transition
+                {{ request()->routeIs('chat.*') ? 'bg-blue-600' : 'hover:bg-white/10' }}">
+                    Chat Customer
                 </a>
+
+            @endif
 
             </nav>
         </div>
@@ -132,7 +154,9 @@
 @else
     Guest
 @endauth</p>
-                        <p class="text-xs text-gray-400">Admin</p>
+                        <p class="text-xs text-gray-400">
+                            {{ auth()->user()->role }}
+                        </p>
                     </div>
                 </div>
 
