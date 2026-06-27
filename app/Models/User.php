@@ -36,9 +36,37 @@ class User extends Authenticatable
     ];
 
     // ✅ CEK ADMIN
+    // ===============================
+    // ROLE
+    // ===============================
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'super_admin';
+    }
+
+    public function isAdminPembelian(): bool
+    {
+        return $this->role === 'admin_pembelian';
+    }
+
+    public function isAdminPenjualan(): bool
+    {
+        return $this->role === 'admin_penjualan';
+    }
+
+    public function isCustomer(): bool
+    {
+        return $this->role === 'customer';
+    }
+
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return in_array($this->role, [
+            'super_admin',
+            'admin_pembelian',
+            'admin_penjualan',
+        ]);
     }
 
     // ✅ URL FOTO
